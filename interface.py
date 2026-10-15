@@ -359,10 +359,14 @@ def traiter(c, q, historique, neurones, exemples):
         c.humeur = "content"
         c.gagner(1)
     elif not ds.commande_valide(contenu):
-        point(Text(f"Commande introuvable : {contenu}", style="red"), "red")
+        point(Text.assemble((f"Je ne lance pas cette commande : {ds.pourquoi_invalide(contenu)}.\n", "red"),
+                            (contenu[:300], GRIS)), "red")
         montrer(c, c.dit("invalide", "triste"))
     else:
-        executer_flux(c, q, contenu, neurones, exemples, True)
+        executer_flux(c, q, contenu, neurones, exemples, contenu not in ds.APPLI)
+    for note in ds.NOTE:  # partie de la demande qu'aucune commande ne peut faire : on le dit franchement
+        point(Text(note), GRIS)
+    ds.NOTE.clear()
     statut(c, duree)
 
 

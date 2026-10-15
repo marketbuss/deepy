@@ -1,6 +1,7 @@
 """DeepSeek local (Ollama) + competences terminal ("neurones"), chaque commande confirmee."""
 import json, os, re, shutil, subprocess, time, unicodedata, urllib.request
 import securite
+import applis
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 # Donnees de l'utilisateur hors du dossier du programme (mise a jour sans rien perdre)
@@ -139,9 +140,20 @@ def _lire_json(p, defaut):
 def charger_neurones():
     """Neurones de l'utilisateur + nouveaux neurones livres avec Deepy (sauf ceux qu'il a oublies)."""
     perso = _lire_json(FICHIER_NEURONES, [])
+    livres = _lire_json(os.path.join(ICI, "neurones.json"), [])
+    par_nom = {n["nom"]: n for n in livres}
+    change = False
+    for i, n in enumerate(list(perso)):  # neurone devenu interdit (ancienne version, ou modifie a la main) : on le repare ou on le retire
+        if securite.analyser(n.get("cmd", "").replace("{x}", "x"))[0] == "bloque":
+            if n["nom"] in par_nom and securite.analyser(par_nom[n["nom"]]["cmd"].replace("{x}", "x"))[0] != "bloque":
+                perso[i] = par_nom[n["nom"]]
+            else:
+                perso[i] = None
+            change = True
+    perso = [n for n in perso if n]
     connus = {n["nom"] for n in perso} | set(lire_config().get("oublies", []))
-    nouveaux = [n for n in _lire_json(os.path.join(ICI, "neurones.json"), []) if n["nom"] not in connus]
-    if nouveaux:
+    nouveaux = [n for n in livres if n["nom"] not in connus]
+    if nouveaux or change:
         perso += nouveaux
         sauver_neurones(perso)
     return perso
@@ -418,6 +430,27 @@ def repondre_groq(q, historique):
     return action, contenu, time.time() - t0
 
 
+NOTE = []  # message a afficher apres la commande (ex. partie de la demande impossible en une commande)
+APPLI = []  # derniere commande venue du resolveur d'applis : pas memorisee (le chemin change a chaque mise a jour)
+
+
+def ouvrir_appli(q):
+    """« ouvre X » : chemin reel de l'appli (menu Demarrer), jamais devine par le modele."""
+    if not re.match(r"^(peux[- ]tu |tu peux |stp |svp )?(ouvre|ouvrir|lance|lancer|demarre|demarrer|execute|start)\b", norm(q)):
+        return None
+    trouve = applis.intention(q)
+    if not trouve:
+        return None
+    appli, reste = trouve
+    NOTE.clear()
+    if reste:
+        NOTE.append(f"J'ouvre {appli['nom']}. Pour « {reste} » : je ne peux pas cliquer dans une appli, "
+                    f"fais-le à la main une fois {appli['nom']} ouvert.")
+    APPLI.clear()
+    APPLI.append(applis.commande(appli))
+    return "commande", APPLI[0], 0.0
+
+
 def repondre(q, historique, exemples):
     """Cerveau groq si choisi (repli automatique sur le local en cas d'erreur), sinon local."""
     global _GROQ_KO
@@ -427,8 +460,14 @@ def repondre(q, historique, exemples):
     c = calcul(q)
     if c:
         return "reponse", c, 0.0
+    a = ouvrir_appli(q)
+    if a:
+        return a
     if groq_actif():
         connu = cache_lire(q)
+        if connu and connu[0] == "commande" and not commande_valide(connu[1]):  # reponse en cache devenue fausse
+            cache_retirer(q)
+            connu = None
         if connu:  # deja repondu : 0 token
             compter(cache_local=True)
             return connu[0], connu[1], 0.0
@@ -438,6 +477,12 @@ def repondre(q, historique, exemples):
             return repondre_local(q, historique, exemples)
         try:
             r = repondre_groq(q, historique)
+            if r[0] == "commande" and not commande_valide(r[1]):  # chemin invente... : une 2e chance avec la raison
+                retour = (f"Cette commande ne marche pas sur ce PC : {pourquoi_invalide(r[1])}. N'invente aucun chemin. "
+                          f"Si l'utilisateur a donné ce chemin et qu'il n'existe pas, réponds action=reponse en le lui disant. "
+                          f"Pour une appli, utilise son nom de commande ou Get-StartApps. Ne fouille jamais tout un disque.")
+                r = repondre_groq(f"{retour} Demande d'origine : {q}",
+                                  historique + [{"role": "user", "content": q}, {"role": "assistant", "content": r[1]}])
             if r[0] == "reponse" or commande_valide(r[1]):
                 cache_ecrire(q, r[0], r[1])
             return r
@@ -459,6 +504,9 @@ def repondre_local(q, historique, exemples):
     c = calcul(q)
     if c:
         return "reponse", c, time.time() - t0
+    a = ouvrir_appli(q)
+    if a:
+        return a
     prefixe = '{"action": "%s", "contenu": "' % action
     tours = []
     for e in proches(q, exemples, action):
@@ -496,9 +544,41 @@ def generer(consigne, prefixe="", stop=None, longueur=600, systeme="", temperatu
         return json.load(r)["response"]
 
 
+# Commandes qui LISENT ou LANCENT un chemin : il doit exister (les commandes qui creent ne sont pas verifiees)
+LIT_CHEMIN = re.compile(r"\b(get-childitem|gci|ls|dir|get-content|gc|cat|type|start-process|saps|start|invoke-item|ii|"
+                        r"explorer(\.exe)?|set-location|cd|sl|remove-item|ri|rm|del|copy-item|cp|copy|move-item|mv|move|"
+                        r"rename-item|ren|expand-archive|select-string|get-item|gi|test-path)\b(?:\s+-\w+)*\s+(\"[^\"]+\"|'[^']+'|[^\s;|]+)",
+                        re.I)
+
+
+def _chemin_reel(brut):
+    p = brut.strip("\"'")
+    p = re.sub(r"\$env:(\w+)", lambda m: os.environ.get(m.group(1), m.group(0)), p, flags=re.I)
+    p = re.sub(r"^~(?=[\\/]|$)", lambda m: os.path.expanduser("~"), p)
+    return p
+
+
+def pourquoi_invalide(cmd):
+    """Raison pour laquelle la commande ne peut pas marcher, ou "" si elle semble correcte.
+    Attrape les chemins inventes par le modele (« C:\\Program Files (x86)\\Roblox\\Versions ») avant execution."""
+    if re.search(r"\$\{\w+\.\w+\}", cmd):
+        return "syntaxe PowerShell fausse (${x.y} au lieu de $($x.y))"
+    if re.search(r"(get-childitem|gci|ls|dir)\b[^;|]*['\"\s][a-z]:\\?['\"]?(\s|$)[^;|]*-r(ecurse)?\b", cmd, re.I) or \
+            re.search(r"(get-childitem|gci|ls|dir)\b[^;|]*-r(ecurse)?\b[^;|]*['\"\s][a-z]:\\?['\"]?(\s|$)", cmd, re.I):
+        return "recherche sur un disque entier (beaucoup trop longue) : précise un dossier"
+    for m in LIT_CHEMIN.finditer(cmd):
+        p = _chemin_reel(m.group(3))
+        if not re.match(r"^[a-zA-Z]:[\\/]", p) or "$" in p:  # chemin relatif ou variable : impossible a verifier
+            continue
+        base = re.split(r"[*?]", p)[0]  # joker : on verifie le dossier parent
+        base = os.path.dirname(base) if base != p else base
+        if not os.path.exists(base):
+            return f"le chemin « {p} » n'existe pas sur ce PC"
+    return ""
+
+
 def commande_valide(cmd):
-    """Desactivee : toute sortie du modele part a l'execution, sans filtre sur le 1er mot."""
-    return True
+    return not pourquoi_invalide(cmd)
 
 
 def executer(cmd):
