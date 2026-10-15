@@ -1,0 +1,437 @@
+[
+ [
+  "cree un dossier photos sur le bureau",
+  "commande",
+  "New-Item -ItemType Directory \"$env:USERPROFILE\\Desktop\\photos\""
+ ],
+ [
+  "fais un nouveau dossier projets dans documents",
+  "commande",
+  "New-Item -ItemType Directory \"$env:USERPROFILE\\Documents\\projets\""
+ ],
+ [
+  "cree un fichier notes.txt sur le bureau",
+  "commande",
+  "New-Item -ItemType File \"$env:USERPROFILE\\Desktop\\notes.txt\""
+ ],
+ [
+  "ecris bonjour dans le fichier test.txt",
+  "commande",
+  "Set-Content test.txt 'bonjour'"
+ ],
+ [
+  "ajoute une ligne merci a la fin de test.txt",
+  "commande",
+  "Add-Content test.txt 'merci'"
+ ],
+ [
+  "affiche le contenu de notes.txt",
+  "commande",
+  "Get-Content notes.txt"
+ ],
+ [
+  "copie rapport.pdf dans le dossier archives",
+  "commande",
+  "Copy-Item rapport.pdf archives\\"
+ ],
+ [
+  "deplace image.png sur le bureau",
+  "commande",
+  "Move-Item image.png \"$env:USERPROFILE\\Desktop\\\""
+ ],
+ [
+  "renomme vieux.txt en nouveau.txt",
+  "commande",
+  "Rename-Item vieux.txt nouveau.txt"
+ ],
+ [
+  "supprime le fichier brouillon.txt",
+  "commande",
+  "Remove-Item brouillon.txt"
+ ],
+ [
+  "liste les fichiers du dossier telechargements",
+  "commande",
+  "Get-ChildItem \"$env:USERPROFILE\\Downloads\""
+ ],
+ [
+  "montre les fichiers pdf du bureau",
+  "commande",
+  "Get-ChildItem \"$env:USERPROFILE\\Desktop\" -Filter *.pdf"
+ ],
+ [
+  "combien de fichiers dans documents",
+  "commande",
+  "(Get-ChildItem \"$env:USERPROFILE\\Documents\" -File -Recurse).Count"
+ ],
+ [
+  "taille du dossier telechargements",
+  "commande",
+  "'{0:N0} Mo' -f ((Get-ChildItem \"$env:USERPROFILE\\Downloads\" -Recurse -File | Measure-Object Length -Sum).Sum/1MB)"
+ ],
+ [
+  "dans quel dossier je suis",
+  "commande",
+  "Get-Location"
+ ],
+ [
+  "va dans le dossier documents",
+  "commande",
+  "Set-Location \"$env:USERPROFILE\\Documents\""
+ ],
+ [
+  "ouvre le dossier telechargements",
+  "commande",
+  "explorer \"$env:USERPROFILE\\Downloads\""
+ ],
+ [
+  "ouvre le bloc-notes",
+  "commande",
+  "notepad"
+ ],
+ [
+  "lance la calculatrice",
+  "commande",
+  "calc"
+ ],
+ [
+  "ouvre le gestionnaire des taches",
+  "commande",
+  "taskmgr"
+ ],
+ [
+  "ouvre les parametres windows",
+  "commande",
+  "explorer ms-settings:"
+ ],
+ [
+  "ouvre youtube",
+  "commande",
+  "explorer https://www.youtube.com"
+ ],
+ [
+  "quels programmes tournent",
+  "commande",
+  "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10 Name, CPU"
+ ],
+ [
+  "ferme chrome",
+  "commande",
+  "Stop-Process -Name chrome"
+ ],
+ [
+  "est ce que discord est ouvert",
+  "commande",
+  "Get-Process discord -ErrorAction SilentlyContinue"
+ ],
+ [
+  "combien de ram il me reste",
+  "commande",
+  "(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory/1MB"
+ ],
+ [
+  "quel est mon processeur",
+  "commande",
+  "(Get-CimInstance Win32_Processor).Name"
+ ],
+ [
+  "nom de mon ordinateur",
+  "commande",
+  "$env:COMPUTERNAME"
+ ],
+ [
+  "qui est connecte sur le pc",
+  "commande",
+  "whoami"
+ ],
+ [
+  "depuis quand le pc est allume",
+  "commande",
+  "(Get-Date) - (Get-CimInstance Win32_OperatingSystem).LastBootUpTime"
+ ],
+ [
+  "espace libre sur le disque c",
+  "commande",
+  "Get-PSDrive C"
+ ],
+ [
+  "mon adresse ip",
+  "commande",
+  "Get-NetIPAddress -AddressFamily IPv4"
+ ],
+ [
+  "est ce que google repond",
+  "commande",
+  "Test-Connection google.com -Count 2"
+ ],
+ [
+  "quel wifi j'utilise",
+  "commande",
+  "netsh wlan show interfaces"
+ ],
+ [
+  "vide le cache dns",
+  "commande",
+  "Clear-DnsClientCache"
+ ],
+ [
+  "liste les logiciels installes",
+  "commande",
+  "Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Select-Object DisplayName"
+ ],
+ [
+  "version de python",
+  "commande",
+  "python --version"
+ ],
+ [
+  "installe le module requests",
+  "commande",
+  "python -m pip install requests"
+ ],
+ [
+  "lance le script main.py",
+  "commande",
+  "python main.py"
+ ],
+ [
+  "statut git du projet",
+  "commande",
+  "git status"
+ ],
+ [
+  "cherche le mot erreur dans log.txt",
+  "commande",
+  "Select-String -Path log.txt -Pattern erreur"
+ ],
+ [
+  "trouve les fichiers mp3 dans musique",
+  "commande",
+  "Get-ChildItem \"$env:USERPROFILE\\Music\" -Recurse -Filter *.mp3"
+ ],
+ [
+  "compresse le dossier photos en zip",
+  "commande",
+  "Compress-Archive photos photos.zip"
+ ],
+ [
+  "decompresse archive.zip",
+  "commande",
+  "Expand-Archive archive.zip"
+ ],
+ [
+  "quelle date on est",
+  "commande",
+  "Get-Date"
+ ],
+ [
+  "vide la corbeille",
+  "commande",
+  "Clear-RecycleBin -Force"
+ ],
+ [
+  "eteins le pc",
+  "commande",
+  "Stop-Computer"
+ ],
+ [
+  "redemarre l'ordinateur",
+  "commande",
+  "Restart-Computer"
+ ],
+ [
+  "mets le pc en veille",
+  "commande",
+  "rundll32.exe powrprof.dll,SetSuspendState 0,1,0"
+ ],
+ [
+  "c'est quoi la ram",
+  "reponse",
+  "La memoire vive : elle garde les programmes ouverts pendant qu'ils tournent."
+ ],
+ [
+  "c'est quoi powershell",
+  "reponse",
+  "Le terminal de Windows pour piloter le PC avec des commandes."
+ ],
+ [
+  "bonjour",
+  "reponse",
+  "Salut ! Que veux-tu faire sur le PC ?"
+ ],
+ [
+  "merci",
+  "reponse",
+  "Avec plaisir."
+ ],
+ [
+  "qui es tu",
+  "reponse",
+  "Un assistant local DeepSeek qui peut proposer des commandes sur ton PC."
+ ],
+ [
+  "c'est quoi un fichier zip",
+  "reponse",
+  "Une archive qui regroupe et compresse plusieurs fichiers en un seul."
+ ],
+ [
+  "pourquoi mon pc est lent",
+  "reponse",
+  "Souvent la RAM pleine ou un programme gourmand. Demande-moi « quels programmes tournent »."
+ ],
+ [
+  "c'est quoi une adresse ip",
+  "reponse",
+  "Le numero qui identifie ton appareil sur un reseau."
+ ],
+ [
+  "explique ce qu'est python",
+  "reponse",
+  "Un langage de programmation simple, tres utilise pour l'automatisation et l'IA."
+ ],
+ [
+  "donne moi une idee de business",
+  "reponse",
+  "Un service local simple : par exemple aider des commercants a etre visibles sur Google."
+ ],
+ [
+  "2 plus 2",
+  "reponse",
+  "4."
+ ],
+ [
+  "creer un fichier",
+  "commande",
+  "New-Item -ItemType File \"$env:USERPROFILE\\Desktop\\notes.txt\""
+ ],
+ [
+  "execute la commande a ma plac",
+  "commande",
+  "echo 'bonjour' > test.txt"
+ ],
+ [
+  "copie le mot merci dans le presse papier",
+  "commande",
+  "Set-Clipboard -Value \"merci\""
+ ],
+ [
+  "mets mon adresse mail dans le presse-papiers",
+  "commande",
+  "Set-Clipboard -Value \"mon adresse mail\""
+ ],
+ [
+  "montre le presse papier",
+  "commande",
+  "Get-Clipboard"
+ ],
+ [
+  "vide le presse papier",
+  "commande",
+  "Set-Clipboard -Value $null"
+ ],
+ [
+  "verrouille l'ordinateur",
+  "commande",
+  "rundll32.exe user32.dll,LockWorkStation"
+ ],
+ [
+  "verrouille ma session",
+  "commande",
+  "rundll32.exe user32.dll,LockWorkStation"
+ ],
+ [
+  "ping youtube.com",
+  "commande",
+  "Test-Connection youtube.com -Count 4"
+ ],
+ [
+  "est ce que le site wikipedia repond",
+  "commande",
+  "Test-Connection fr.wikipedia.org -Count 2"
+ ],
+ [
+  "quels logiciels se lancent au demarrage",
+  "commande",
+  "Get-CimInstance Win32_StartupCommand | Select-Object Name, Command"
+ ],
+ [
+  "liste les programmes au lancement du pc",
+  "commande",
+  "Get-CimInstance Win32_StartupCommand | Select-Object Name, Command"
+ ],
+ [
+  "eteins le pc dans 30 minutes",
+  "commande",
+  "shutdown /s /t 1800"
+ ],
+ [
+  "annule l'extinction programmee",
+  "commande",
+  "shutdown /a"
+ ],
+ [
+  "depuis quand l'ordi tourne",
+  "commande",
+  "(Get-Date) - (Get-CimInstance Win32_OperatingSystem).LastBootUpTime"
+ ],
+ [
+  "quel est le nom de ce pc",
+  "commande",
+  "$env:COMPUTERNAME"
+ ],
+ [
+  "montre les reseaux wifi autour",
+  "commande",
+  "netsh wlan show networks"
+ ],
+ [
+  "quelle version de java j'ai",
+  "commande",
+  "java -version"
+ ],
+ [
+  "ouvre twitch",
+  "commande",
+  "Start-Process \"https://www.twitch.tv\""
+ ],
+ [
+  "extrais le zip cours.zip sur le bureau",
+  "commande",
+  "Expand-Archive \"$env:USERPROFILE\\Desktop\\cours.zip\" -DestinationPath \"$env:USERPROFILE\\Desktop\\cours\""
+ ],
+ [
+  "efface le dossier brouillons du bureau",
+  "commande",
+  "Remove-Item \"$env:USERPROFILE\\Desktop\\brouillons\" -Recurse"
+ ],
+ [
+  "quelle est la capitale de l'espagne",
+  "reponse",
+  "Madrid."
+ ],
+ [
+  "comment on fait une fonction en javascript",
+  "reponse",
+  "On écrit function nom(a, b) { return a + b; } puis on l'appelle avec nom(1, 2)."
+ ],
+ [
+  "ecris un petit poeme sur l'automne",
+  "reponse",
+  "Les feuilles dansent, rousses et légères, l'automne murmure ses dernières prières."
+ ],
+ [
+  "raconte une blague",
+  "reponse",
+  "Pourquoi les plongeurs plongent-ils en arrière ? Parce que sinon ils tombent dans le bateau."
+ ],
+ [
+  "qui a cree linux",
+  "reponse",
+  "Linus Torvalds, en 1991."
+ ],
+ [
+  "donne moi une astuce pour etre plus productif",
+  "reponse",
+  "Coupe les notifications et travaille par blocs de 25 minutes avec une pause de 5."
+ ]
+]

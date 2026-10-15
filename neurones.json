@@ -1,0 +1,454 @@
+[
+ {
+  "nom": "creer dossier bureau",
+  "regex": "cree?r? (?:un )?dossier (?P<x>[\\w .-]+?) sur (?:le )?bureau",
+  "cmd": "New-Item -ItemType Directory \"$env:USERPROFILE\\Desktop\\{x}\""
+ },
+ {
+  "nom": "creer fichier bureau",
+  "regex": "(?:cree?r?|fais|fait|ajoute) (?:un |le |moi un )?(?:nouveau )?fichier (?:nomme |appele )?(?P<x>[\\w.-]+\\.\\w+) sur (?:le )?bureau",
+  "cmd": "New-Item -ItemType File \"$env:USERPROFILE\\Desktop\\{x}\""
+ },
+ {
+  "nom": "creer fichier documents",
+  "regex": "(?:cree?r?|fais|fait|ajoute) (?:un |le |moi un )?(?:nouveau )?fichier (?:nomme |appele )?(?P<x>[\\w.-]+\\.\\w+) dans (?:mes |les )?documents",
+  "cmd": "New-Item -ItemType File \"$env:USERPROFILE\\Documents\\{x}\""
+ },
+ {
+  "nom": "creer fichier ici",
+  "regex": "(?:cree?r?|fais|fait|ajoute) (?:un |le |moi un )?(?:nouveau )?fichier (?:nomme |appele )?(?P<x>[\\w.-]+\\.\\w+)$",
+  "cmd": "New-Item -ItemType File \"{x}\""
+ },
+ {
+  "nom": "ecrire dans fichier",
+  "regex": "ecris (?P<t>.+?) dans (?:le fichier )?(?P<x>[\\w.-]+\\.\\w+)$",
+  "cmd": "Add-Content \"{x}\" '{t}'"
+ },
+ {
+  "nom": "creer dossier ici",
+  "regex": "cree?r? (?:un )?dossier (?P<x>[\\w.-]+)$",
+  "cmd": "New-Item -ItemType Directory \"{x}\""
+ },
+ {
+  "nom": "ouvrir appli",
+  "regex": "(?:ouvre|lance) (?:le |la |l')?(?P<x>bloc-notes|calculatrice|explorateur|paint|navigateur)",
+  "cmd": "Start-Process (@{{'bloc-notes'='notepad';'calculatrice'='calc';'explorateur'='explorer';'paint'='mspaint';'navigateur'='msedge'}})['{x}']"
+ },
+ {
+  "nom": "chercher fichier",
+  "regex": "(?:cherche|trouve) (?:le |un )?fichier (?P<x>[\\w.-]+)",
+  "cmd": "Get-ChildItem $env:USERPROFILE -Recurse -Filter '*{x}*' -ErrorAction SilentlyContinue | Select-Object -First 15 FullName"
+ },
+ {
+  "nom": "tuer processus",
+  "regex": "(?:ferme|tue|arrete) (?:le processus |l'appli )?(?P<x>[\\w.-]+)$",
+  "cmd": "Stop-Process -Name '{x}'"
+ },
+ {
+  "nom": "espace disque",
+  "declencheurs": [
+   "espace disque",
+   "place disque",
+   "stockage libre"
+  ],
+  "cmd": "Get-PSDrive -PSProvider FileSystem | Select-Object Name, @{n='Libre(Go)';e={[math]::Round($_.Free/1GB,1)}}, @{n='Utilise(Go)';e={[math]::Round($_.Used/1GB,1)}}"
+ },
+ {
+  "nom": "ram",
+  "declencheurs": [
+   "ram",
+   "memoire libre",
+   "memoire vive"
+  ],
+  "cmd": "$o=Get-CimInstance Win32_OperatingSystem; 'Libre : {0} Go / {1} Go' -f [math]::Round($o.FreePhysicalMemory/1MB,1), [math]::Round($o.TotalVisibleMemorySize/1MB,1)"
+ },
+ {
+  "nom": "processus gourmands",
+  "declencheurs": [
+   "processus",
+   "qui consomme",
+   "programmes ouverts"
+  ],
+  "cmd": "Get-Process | Sort-Object WorkingSet64 -Descending | Select-Object -First 10 Name, Id, @{n='RAM(Mo)';e={[math]::Round($_.WorkingSet64/1MB)}}"
+ },
+ {
+  "nom": "ip locale",
+  "declencheurs": [
+   "mon ip",
+   "adresse ip",
+   "ip locale"
+  ],
+  "cmd": "Get-NetIPAddress -AddressFamily IPv4 | Where-Object IPAddress -ne '127.0.0.1' | Select-Object InterfaceAlias, IPAddress"
+ },
+ {
+  "nom": "test internet",
+  "declencheurs": [
+   "internet marche",
+   "test connexion",
+   "ping"
+  ],
+  "cmd": "Test-Connection 1.1.1.1 -Count 2 | Select-Object Address, ResponseTime"
+ },
+ {
+  "nom": "fichiers du dossier",
+  "declencheurs": [
+   "liste les fichiers",
+   "fichiers ici",
+   "contenu du dossier"
+  ],
+  "cmd": "Get-ChildItem | Select-Object Mode, LastWriteTime, Length, Name"
+ },
+ {
+  "nom": "gros fichiers telechargements",
+  "declencheurs": [
+   "gros fichiers",
+   "fichiers lourds"
+  ],
+  "cmd": "Get-ChildItem $env:USERPROFILE\\Downloads -File -Recurse -ErrorAction SilentlyContinue | Sort-Object Length -Descending | Select-Object -First 10 @{n='Mo';e={[math]::Round($_.Length/1MB)}}, FullName"
+ },
+ {
+  "nom": "batterie",
+  "declencheurs": [
+   "batterie"
+  ],
+  "cmd": "Get-CimInstance Win32_Battery | Select-Object EstimatedChargeRemaining, BatteryStatus"
+ },
+ {
+  "nom": "version windows",
+  "declencheurs": [
+   "version windows",
+   "quel windows"
+  ],
+  "cmd": "Get-ComputerInfo -Property OsName, OsVersion, OsArchitecture"
+ },
+ {
+  "nom": "date heure",
+  "declencheurs": [
+   "quelle heure",
+   "date du jour"
+  ],
+  "cmd": "Get-Date -Format 'dddd dd MMMM yyyy HH:mm'"
+ },
+ {
+  "nom": "modeles ollama",
+  "declencheurs": [
+   "modeles ollama",
+   "ollama list"
+  ],
+  "cmd": "ollama list"
+ },
+ {
+  "nom": "ports ouverts",
+  "declencheurs": [
+   "ports ouverts",
+   "ports en ecoute"
+  ],
+  "cmd": "Get-NetTCPConnection -State Listen | Select-Object LocalPort, OwningProcess | Sort-Object LocalPort -Unique"
+ },
+ {
+  "nom": "vider corbeille",
+  "declencheurs": [
+   "vide la corbeille",
+   "vider la corbeille"
+  ],
+  "cmd": "Clear-RecycleBin -Force"
+ },
+ {
+  "nom": "verrouiller pc",
+  "declencheurs": [
+   "verrouille le pc",
+   "verrouiller le pc",
+   "verrouille l'ordinateur",
+   "verrouille l'ordi"
+  ],
+  "cmd": "rundll32.exe user32.dll,LockWorkStation"
+ },
+ {
+  "nom": "mettre en veille",
+  "declencheurs": [
+   "mets en veille",
+   "mettre en veille",
+   "mise en veille"
+  ],
+  "cmd": "rundll32.exe powrprof.dll,SetSuspendState 0,1,0"
+ },
+ {
+  "nom": "redemarrer pc",
+  "declencheurs": [
+   "redemarre le pc",
+   "redemarrer le pc",
+   "redemarre l'ordinateur",
+   "redemarre l'ordi"
+  ],
+  "cmd": "Restart-Computer"
+ },
+ {
+  "nom": "eteindre pc",
+  "declencheurs": [
+   "eteins le pc",
+   "eteindre le pc",
+   "eteins l'ordinateur",
+   "eteins l'ordi"
+  ],
+  "cmd": "Stop-Computer"
+ },
+ {
+  "nom": "processeur",
+  "declencheurs": [
+   "mon processeur",
+   "quel processeur"
+  ],
+  "cmd": "(Get-CimInstance Win32_Processor).Name"
+ },
+ {
+  "nom": "carte graphique",
+  "declencheurs": [
+   "carte graphique",
+   "ma gpu",
+   "mon gpu"
+  ],
+  "cmd": "Get-CimInstance Win32_VideoController | Select-Object Name, DriverVersion"
+ },
+ {
+  "nom": "nom du pc",
+  "declencheurs": [
+   "nom du pc",
+   "nom de l'ordinateur",
+   "nom de mon pc"
+  ],
+  "cmd": "$env:COMPUTERNAME"
+ },
+ {
+  "nom": "utilisateur",
+  "declencheurs": [
+   "qui suis je",
+   "mon utilisateur",
+   "nom d'utilisateur"
+  ],
+  "cmd": "whoami"
+ },
+ {
+  "nom": "allume depuis",
+  "declencheurs": [
+   "allume depuis",
+   "depuis quand le pc",
+   "uptime"
+  ],
+  "cmd": "(Get-Date) - (Get-CimInstance Win32_OperatingSystem).LastBootUpTime | Select-Object Days, Hours, Minutes"
+ },
+ {
+  "nom": "wifi actuel",
+  "declencheurs": [
+   "quel wifi",
+   "mon wifi",
+   "reseau wifi"
+  ],
+  "cmd": "netsh wlan show interfaces"
+ },
+ {
+  "nom": "ip publique",
+  "declencheurs": [
+   "ip publique",
+   "adresse ip publique"
+  ],
+  "cmd": "Invoke-RestMethod https://api.ipify.org"
+ },
+ {
+  "nom": "vider cache dns",
+  "declencheurs": [
+   "vide le cache dns",
+   "vider le cache dns",
+   "flush dns"
+  ],
+  "cmd": "Clear-DnsClientCache"
+ },
+ {
+  "nom": "logiciels installes",
+  "declencheurs": [
+   "logiciels installes",
+   "programmes installes",
+   "applications installees"
+  ],
+  "cmd": "Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*, HKLM:\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* -ErrorAction SilentlyContinue | Where-Object DisplayName | Sort-Object DisplayName | Select-Object DisplayName, DisplayVersion"
+ },
+ {
+  "nom": "mises a jour logiciels",
+  "declencheurs": [
+   "mises a jour",
+   "mise a jour des logiciels",
+   "logiciels a mettre a jour"
+  ],
+  "cmd": "winget upgrade"
+ },
+ {
+  "nom": "dossier courant",
+  "declencheurs": [
+   "ou suis je",
+   "dossier actuel",
+   "dans quel dossier"
+  ],
+  "cmd": "Get-Location"
+ },
+ {
+  "nom": "ouvrir dossier courant",
+  "declencheurs": [
+   "ouvre ce dossier",
+   "ouvre le dossier actuel"
+  ],
+  "cmd": "explorer ."
+ },
+ {
+  "nom": "fichiers recents",
+  "declencheurs": [
+   "fichiers recents",
+   "derniers fichiers"
+  ],
+  "cmd": "Get-ChildItem \"$env:USERPROFILE\\Downloads\", \"$env:USERPROFILE\\Desktop\", \"$env:USERPROFILE\\Documents\" -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 10 LastWriteTime, FullName"
+ },
+ {
+  "nom": "capture d'ecran",
+  "declencheurs": [
+   "capture d'ecran",
+   "screenshot",
+   "capture ecran"
+  ],
+  "cmd": "explorer ms-screenclip:"
+ },
+ {
+  "nom": "presse-papiers",
+  "declencheurs": [
+   "presse-papiers",
+   "presse papier",
+   "presse papiers"
+  ],
+  "cmd": "Get-Clipboard"
+ },
+ {
+  "nom": "version python",
+  "declencheurs": [
+   "version de python",
+   "version python"
+  ],
+  "cmd": "python --version"
+ },
+ {
+  "nom": "version git",
+  "declencheurs": [
+   "version de git",
+   "version git"
+  ],
+  "cmd": "git --version"
+ },
+ {
+  "nom": "statut git",
+  "declencheurs": [
+   "statut git",
+   "git status",
+   "etat git"
+  ],
+  "cmd": "git status"
+ },
+ {
+  "nom": "programmes au demarrage",
+  "declencheurs": [
+   "programmes au demarrage",
+   "demarrage automatique",
+   "lances au demarrage"
+  ],
+  "cmd": "Get-CimInstance Win32_StartupCommand | Select-Object Name, Command"
+ },
+ {
+  "nom": "nettoyer temporaires",
+  "declencheurs": [
+   "nettoie les fichiers temporaires",
+   "vide les fichiers temporaires",
+   "supprime les fichiers temporaires"
+  ],
+  "cmd": "Remove-Item \"$env:TEMP\\*\" -Recurse -Force -ErrorAction SilentlyContinue"
+ },
+ {
+  "nom": "ouvrir dossier perso",
+  "regex": "ouvre (?:le dossier |mes |mon )?(?P<x>telechargements|documents|bureau|images|musique|videos)$",
+  "cmd": "explorer \"$env:USERPROFILE\\$((@{{'telechargements'='Downloads';'documents'='Documents';'bureau'='Desktop';'images'='Pictures';'musique'='Music';'videos'='Videos'}})['{x}'])\""
+ },
+ {
+  "nom": "ouvrir site",
+  "regex": "(?:ouvre|va sur) (?:le site )?(?P<x>[a-z0-9-]+\\.(?:com|fr|be|ch|org|net|io|dev|app|ai))$",
+  "cmd": "explorer \"https://{x}\""
+ },
+ {
+  "nom": "recherche google",
+  "regex": "(?:cherche|recherche) (?P<x>.+?) sur (?:google|internet|le web)$",
+  "cmd": "explorer (\"https://www.google.com/search?q=\" + [uri]::EscapeDataString('{x}'))"
+ },
+ {
+  "nom": "recherche youtube",
+  "regex": "(?:cherche|mets|lance) (?P<x>.+?) sur youtube$",
+  "cmd": "explorer (\"https://www.youtube.com/results?search_query=\" + [uri]::EscapeDataString('{x}'))"
+ },
+ {
+  "nom": "meteo",
+  "regex": "meteo (?:a |de |pour |sur )?(?P<x>[a-z-]+)$",
+  "cmd": "Invoke-RestMethod \"https://wttr.in/{x}?format=3&lang=fr\""
+ },
+ {
+  "nom": "calcul",
+  "regex": "^calcule (?P<x>[\\d+\\-*/(). ]+)$",
+  "cmd": "{x}"
+ },
+ {
+  "nom": "taille dossier",
+  "regex": "taille (?:du dossier |de )(?P<x>[\\w .-]+)$",
+  "cmd": "'{{0:N1}} Mo' -f ((Get-ChildItem '{x}' -Recurse -File -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum/1MB)"
+ },
+ {
+  "nom": "compresser",
+  "regex": "^(?:compresse|zippe) (?:le dossier |le fichier )?(?P<x>[\\w.-]+)$",
+  "cmd": "Compress-Archive -Path '{x}' -DestinationPath '{x}.zip'"
+ },
+ {
+  "nom": "decompresser",
+  "regex": "^(?:decompresse|dezippe|extrais) (?:le fichier |l'archive )?(?P<x>[\\w.-]+\\.zip)$",
+  "cmd": "Expand-Archive '{x}' -DestinationPath ('{x}' -replace '\\.zip$','')"
+ },
+ {
+  "nom": "copier fichier",
+  "regex": "copie (?:le fichier )?(?P<x>[\\w.-]+\\.\\w+) (?:dans|vers) (?:le dossier )?(?P<y>[\\w .:\\\\-]+)$",
+  "cmd": "Copy-Item '{x}' '{y}'"
+ },
+ {
+  "nom": "renommer",
+  "regex": "renomme (?:le fichier |le dossier )?(?P<x>[\\w.-]+) en (?P<y>[\\w.-]+)$",
+  "cmd": "Rename-Item '{x}' '{y}'"
+ },
+ {
+  "nom": "supprimer fichier",
+  "regex": "(?:supprime|efface) (?:le fichier )?(?P<x>[\\w.-]+\\.\\w+)$",
+  "cmd": "Remove-Item '{x}'"
+ },
+ {
+  "nom": "afficher fichier",
+  "regex": "(?:affiche|montre|lis) (?:le contenu de |le fichier |moi )?(?P<x>[\\w.-]+\\.\\w+)$",
+  "cmd": "Get-Content '{x}' -TotalCount 50"
+ },
+ {
+  "nom": "chercher dans fichier",
+  "regex": "cherche (?:le mot )?(?P<t>[\\w-]+) dans (?P<x>[\\w.-]+\\.\\w+)$",
+  "cmd": "Select-String -Path '{x}' -Pattern '{t}'"
+ },
+ {
+  "nom": "chercher logiciel",
+  "regex": "(?:cherche|trouve) (?:le logiciel |l'appli |l'application )(?P<x>[\\w.-]+)$",
+  "cmd": "winget search {x}"
+ },
+ {
+  "nom": "installer logiciel",
+  "regex": "installe (?:le logiciel |l'appli |l'application )(?P<x>[\\w.-]+)$",
+  "cmd": "winget install {x}"
+ },
+ {
+  "nom": "installer module python",
+  "regex": "installe (?:le module |la librairie |la bibliotheque |le paquet )?(?P<x>[\\w.-]+)(?: avec pip| en python)?$",
+  "cmd": "python -m pip install {x}"
+ }
+]

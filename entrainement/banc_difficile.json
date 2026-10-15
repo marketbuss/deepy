@@ -1,0 +1,373 @@
+{
+ "_info": "entrainement = questions qu'on a le droit d'apprendre ; controle = jamais ajoutees aux exemples (mesure honnete)",
+ "entrainement": [
+  [
+   "supprime le fichier vieux.txt du bureau",
+   [
+    "Remove-Item",
+    "del",
+    "rm"
+   ]
+  ],
+  [
+   "quelle est mon adresse ip",
+   [
+    "ipconfig",
+    "Get-NetIPAddress",
+    "Get-NetIPConfiguration"
+   ]
+  ],
+  [
+   "combien d'espace libre sur le disque c",
+   [
+    "Get-PSDrive",
+    "Get-Volume",
+    "Get-CimInstance",
+    "Get-WmiObject"
+   ]
+  ],
+  [
+   "vide la corbeille",
+   [
+    "Clear-RecycleBin"
+   ]
+  ],
+  [
+   "eteins l'ordi dans 10 minutes",
+   [
+    "shutdown",
+    "Stop-Computer"
+   ]
+  ],
+  [
+   "montre les 5 processus qui prennent le plus de ram",
+   [
+    "Get-Process"
+   ]
+  ],
+  [
+   "ouvre youtube",
+   [
+    "Start-Process",
+    "start",
+    "explorer"
+   ]
+  ],
+  [
+   "telecharge https://exemple.com/a.zip dans telechargements",
+   [
+    "Invoke-WebRequest",
+    "iwr",
+    "curl",
+    "Start-BitsTransfer"
+   ]
+  ],
+  [
+   "dezippe archive.zip",
+   [
+    "Expand-Archive"
+   ]
+  ],
+  [
+   "affiche le contenu du dossier telechargements",
+   [
+    "Get-ChildItem",
+    "ls",
+    "dir"
+   ]
+  ],
+  [
+   "quelle version de python j'ai",
+   [
+    "python",
+    "py"
+   ]
+  ],
+  [
+   "liste les programmes installes",
+   [
+    "Get-Package",
+    "Get-ItemProperty",
+    "winget",
+    "Get-CimInstance",
+    "Get-WmiObject"
+   ]
+  ],
+  [
+   "copie le texte bonjour dans le presse papier",
+   [
+    "Set-Clipboard",
+    "clip"
+   ]
+  ],
+  [
+   "qu'est ce qu'il y a dans le presse papier",
+   [
+    "Get-Clipboard"
+   ]
+  ],
+  [
+   "cree un fichier hello.py qui affiche bonjour",
+   [
+    "Set-Content",
+    "Out-File",
+    "New-Item",
+    "echo"
+   ]
+  ],
+  [
+   "combien de fichiers dans documents",
+   [
+    "Get-ChildItem",
+    "Measure-Object"
+   ]
+  ],
+  [
+   "verrouille le pc",
+   [
+    "rundll32",
+    "LockWorkStation"
+   ]
+  ],
+  [
+   "ouvre le gestionnaire des taches",
+   [
+    "taskmgr",
+    "Start-Process"
+   ]
+  ],
+  [
+   "depuis quand le pc est allume",
+   [
+    "Get-CimInstance",
+    "LastBootUpTime",
+    "Get-Uptime",
+    "systeminfo"
+   ]
+  ],
+  [
+   "nettoie les fichiers temporaires",
+   [
+    "Remove-Item",
+    "cleanmgr"
+   ]
+  ],
+  [
+   "ping google",
+   [
+    "Test-Connection",
+    "ping"
+   ]
+  ],
+  [
+   "liste les wifi disponibles",
+   [
+    "netsh"
+   ]
+  ],
+  [
+   "quel est le nom de mon pc",
+   [
+    "hostname",
+    "$env:COMPUTERNAME",
+    "Get-ComputerInfo"
+   ]
+  ],
+  [
+   "c'est quoi la difference entre ram et rom",
+   "reponse"
+  ],
+  [
+   "pourquoi mon pc rame",
+   "reponse"
+  ],
+  [
+   "donne moi une idee de nom pour mon chat",
+   "reponse"
+  ],
+  [
+   "qui a invente internet",
+   "reponse"
+  ],
+  [
+   "comment on fait une boucle for en python",
+   "reponse"
+  ],
+  [
+   "c'est quoi git",
+   "reponse"
+  ],
+  [
+   "traduis hello en francais",
+   "reponse"
+  ],
+  [
+   "ecris un poeme sur la mer",
+   "reponse"
+  ],
+  [
+   "quelle est la capitale du canada",
+   "reponse"
+  ],
+  [
+   "combien font 15 fois 12",
+   "reponse"
+  ],
+  [
+   "tu es qui",
+   "reponse"
+  ]
+ ],
+ "controle": [
+  [
+   "supprime le dossier test sur le bureau",
+   [
+    "Remove-Item",
+    "rmdir",
+    "rd"
+   ]
+  ],
+  [
+   "quelle est l'adresse ip de mon pc",
+   [
+    "ipconfig",
+    "Get-NetIPAddress",
+    "Get-NetIPConfiguration"
+   ]
+  ],
+  [
+   "combien de place il reste sur mes disques",
+   [
+    "Get-PSDrive",
+    "Get-Volume",
+    "Get-CimInstance",
+    "Get-WmiObject"
+   ]
+  ],
+  [
+   "arrete le pc",
+   [
+    "Stop-Computer",
+    "shutdown"
+   ]
+  ],
+  [
+   "ouvre google",
+   [
+    "Start-Process",
+    "start",
+    "explorer"
+   ]
+  ],
+  [
+   "decompresse photos.zip sur le bureau",
+   [
+    "Expand-Archive"
+   ]
+  ],
+  [
+   "quelle version de node j'ai",
+   [
+    "node"
+   ]
+  ],
+  [
+   "mets salut dans le presse papier",
+   [
+    "Set-Clipboard",
+    "clip"
+   ]
+  ],
+  [
+   "depuis combien de temps mon ordi est allume",
+   [
+    "Get-CimInstance",
+    "LastBootUpTime",
+    "Get-Uptime",
+    "systeminfo"
+   ]
+  ],
+  [
+   "montre les reseaux wifi",
+   [
+    "netsh"
+   ]
+  ],
+  [
+   "comment s'appelle mon ordinateur",
+   [
+    "hostname",
+    "$env:COMPUTERNAME",
+    "Get-ComputerInfo"
+   ]
+  ],
+  [
+   "lance le bloc-notes",
+   [
+    "notepad",
+    "Start-Process"
+   ]
+  ],
+  [
+   "cree un dossier backup dans documents",
+   [
+    "New-Item",
+    "mkdir",
+    "md"
+   ]
+  ],
+  [
+   "cherche les fichiers pdf dans telechargements",
+   [
+    "Get-ChildItem",
+    "dir",
+    "ls"
+   ]
+  ],
+  [
+   "quels programmes demarrent avec windows",
+   [
+    "Get-CimInstance",
+    "Win32_StartupCommand",
+    "Get-ItemProperty",
+    "wmic"
+   ]
+  ],
+  [
+   "c'est quoi un ssd",
+   "reponse"
+  ],
+  [
+   "quelle est la capitale de l'italie",
+   "reponse"
+  ],
+  [
+   "combien font 7 fois 8",
+   "reponse"
+  ],
+  [
+   "ecris une blague",
+   "reponse"
+  ],
+  [
+   "comment on declare une variable en python",
+   "reponse"
+  ],
+  [
+   "qui est le president de la france",
+   "reponse"
+  ],
+  [
+   "donne moi un conseil pour dormir",
+   "reponse"
+  ],
+  [
+   "pourquoi le ciel est bleu",
+   "reponse"
+  ],
+  [
+   "bonne nuit",
+   "reponse"
+  ]
+ ]
+}
